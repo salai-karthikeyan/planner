@@ -1,0 +1,561 @@
+import { useState } from "react";
+
+const days = [
+  {
+    date: "Mar 2", day: "MON", label: "Day 1", theme: "Launch Day",
+    schedule: [
+      { time: "6:30", icon: "☀️", task: "Wake up", type: "routine" },
+      { time: "6:30–7:00", icon: "🏃", task: "Exercise — 30 min", type: "health" },
+      { time: "7:00–7:45", icon: "🚿", task: "Get ready", type: "routine" },
+      { time: "7:45–8:15", icon: "📖", task: "Read book — 30 min", type: "learn" },
+      { time: "8:15–9:00", icon: "🎒", task: "Daughter prep + school drop", type: "family" },
+      { time: "9:00–9:30", icon: "📰", task: "Newspaper — note 2 reel ideas", type: "content" },
+      { time: "9:30–10:00", icon: "🥣", task: "Breakfast", type: "routine" },
+      { time: "10:00–12:00", icon: "💻", task: "Office work", type: "office" },
+      { time: "12:00–12:30", icon: "💡", task: "FLEX: Add newspaper ideas to Reel Idea Bank doc", type: "flex" },
+      { time: "12:30–2:30", icon: "💻", task: "Office + lunch", type: "office" },
+      { time: "2:30–4:30", icon: "🤝", task: "Meetings", type: "office" },
+      { time: "4:30–7:30", icon: "💻", task: "Office work", type: "office" },
+      { time: "7:30–8:00", icon: "🍽️", task: "Dinner", type: "routine" },
+      { time: "8:00–8:30", icon: "👧", task: "Daughter time", type: "family" },
+      { time: "8:30–10:00", icon: "✍️", task: "CREATIVE: Write + publish Substack #1", type: "creative" },
+      { time: "10:00–10:30", icon: "🎬", task: "CREATIVE: Rough-draft Reel #1 script", type: "creative" },
+      { time: "11:00", icon: "🌙", task: "Sleep", type: "routine" },
+    ],
+    wins: ["📬 Substack #1 published", "🎬 Reel #1 script started"]
+  },
+  {
+    date: "Mar 3", day: "TUE", label: "Day 2", theme: "Shoot Day",
+    schedule: [
+      { time: "6:30", icon: "☀️", task: "Wake up", type: "routine" },
+      { time: "6:30–7:00", icon: "🏃", task: "Exercise — 30 min", type: "health" },
+      { time: "7:00–7:45", icon: "🚿", task: "Get ready", type: "routine" },
+      { time: "7:45–8:15", icon: "📖", task: "Read book — 30 min", type: "learn" },
+      { time: "8:15–9:00", icon: "🎒", task: "Daughter prep + school drop", type: "family" },
+      { time: "9:00–9:30", icon: "📰", task: "Newspaper + reel idea notes", type: "content" },
+      { time: "9:30–10:00", icon: "🥣", task: "Breakfast", type: "routine" },
+      { time: "10:00–12:00", icon: "💻", task: "Office work", type: "office" },
+      { time: "12:00–12:30", icon: "💡", task: "FLEX: LinkedIn job search — list 10 roles (UX Writing, Content Design, Comms, Marketing Head)", type: "flex" },
+      { time: "12:30–2:30", icon: "💻", task: "Office + lunch", type: "office" },
+      { time: "2:30–4:30", icon: "🤝", task: "Meetings", type: "office" },
+      { time: "4:30–7:30", icon: "💻", task: "Office work", type: "office" },
+      { time: "7:30–8:00", icon: "🍽️", task: "Dinner", type: "routine" },
+      { time: "8:00–8:30", icon: "👧", task: "Daughter time", type: "family" },
+      { time: "8:30–9:30", icon: "🎬", task: "CREATIVE: Finalize Reel #1 script + set up shoot", type: "creative" },
+      { time: "9:30–10:30", icon: "📹", task: "CREATIVE: Shoot Reel #1 (selfie cam, good light)", type: "creative" },
+      { time: "11:00", icon: "🌙", task: "Sleep", type: "routine" },
+    ],
+    wins: ["🎥 Reel #1 shot", "📋 Job market list started"]
+  },
+  {
+    date: "Mar 4", day: "WED", label: "Day 3", theme: "Skills Day",
+    schedule: [
+      { time: "6:30", icon: "☀️", task: "Wake up", type: "routine" },
+      { time: "6:30–7:00", icon: "🏃", task: "Exercise — 30 min", type: "health" },
+      { time: "7:00–7:45", icon: "🚿", task: "Get ready", type: "routine" },
+      { time: "7:45–8:15", icon: "📖", task: "Read book — 30 min", type: "learn" },
+      { time: "8:15–9:00", icon: "🎒", task: "Daughter prep + school drop", type: "family" },
+      { time: "9:00–9:30", icon: "📰", task: "Newspaper + reel idea notes", type: "content" },
+      { time: "9:30–10:00", icon: "🥣", task: "Breakfast", type: "routine" },
+      { time: "10:00–12:00", icon: "💻", task: "Office work", type: "office" },
+      { time: "12:00–12:30", icon: "💡", task: "FLEX: Explore Claude skills.md — read SKILL.md file, understand writing workflows", type: "flex" },
+      { time: "12:30–2:30", icon: "💻", task: "Office + lunch", type: "office" },
+      { time: "2:30–4:30", icon: "🤝", task: "Meetings", type: "office" },
+      { time: "4:30–7:30", icon: "💻", task: "Office work", type: "office" },
+      { time: "7:30–8:00", icon: "🍽️", task: "Dinner", type: "routine" },
+      { time: "8:00–8:30", icon: "👧", task: "Daughter time", type: "family" },
+      { time: "8:30–10:00", icon: "✍️", task: "CREATIVE: Write + publish Substack #2", type: "creative" },
+      { time: "10:00–10:30", icon: "✂️", task: "CREATIVE: Edit Reel #1 (CapCut — captions, trim, music)", type: "creative" },
+      { time: "11:00", icon: "🌙", task: "Sleep", type: "routine" },
+    ],
+    wins: ["📬 Substack #2 published", "✂️ Reel #1 edited", "🤖 Claude skills.md learned"]
+  },
+  {
+    date: "Mar 5", day: "THU", label: "Day 4", theme: "Portfolio Day",
+    schedule: [
+      { time: "6:30", icon: "☀️", task: "Wake up", type: "routine" },
+      { time: "6:30–7:00", icon: "🏃", task: "Exercise — 30 min", type: "health" },
+      { time: "7:00–7:45", icon: "🚿", task: "Get ready", type: "routine" },
+      { time: "7:45–8:15", icon: "📖", task: "Read book — 30 min", type: "learn" },
+      { time: "8:15–9:00", icon: "🎒", task: "Daughter prep + school drop", type: "family" },
+      { time: "9:00–9:30", icon: "📰", task: "Newspaper + reel idea notes", type: "content" },
+      { time: "9:30–10:00", icon: "🥣", task: "Breakfast", type: "routine" },
+      { time: "10:00–12:00", icon: "💻", task: "Office work", type: "office" },
+      { time: "12:00–12:30", icon: "💡", task: "FLEX: Study 3 UX Writing JDs — note recurring skills (microcopy, Figma, tone of voice)", type: "flex" },
+      { time: "12:30–2:30", icon: "💻", task: "Office + lunch", type: "office" },
+      { time: "2:30–4:30", icon: "🤝", task: "Meetings", type: "office" },
+      { time: "4:30–7:30", icon: "💻", task: "Office work", type: "office" },
+      { time: "7:30–8:00", icon: "🍽️", task: "Dinner", type: "routine" },
+      { time: "8:00–8:30", icon: "👧", task: "Daughter time", type: "family" },
+      { time: "8:30–9:00", icon: "🚀", task: "CREATIVE: Publish Reel #1 live ✅", type: "creative" },
+      { time: "9:00–10:30", icon: "🌐", task: "CREATIVE: Set up portfolio skeleton (Notion/Carrd/Framer) — About, Work, Contact", type: "creative" },
+      { time: "11:00", icon: "🌙", task: "Sleep", type: "routine" },
+    ],
+    wins: ["🎉 Reel #1 LIVE!", "🌐 Portfolio skeleton up"]
+  },
+  {
+    date: "Mar 6", day: "FRI", label: "Day 5", theme: "Newsletter Day",
+    schedule: [
+      { time: "6:30", icon: "☀️", task: "Wake up", type: "routine" },
+      { time: "6:30–7:00", icon: "🏃", task: "Exercise — 30 min", type: "health" },
+      { time: "7:00–7:45", icon: "🚿", task: "Get ready", type: "routine" },
+      { time: "7:45–8:15", icon: "📖", task: "Read book — 30 min", type: "learn" },
+      { time: "8:15–9:00", icon: "🎒", task: "Daughter prep + school drop", type: "family" },
+      { time: "9:00–9:30", icon: "📰", task: "Newspaper + reel idea notes", type: "content" },
+      { time: "9:30–10:00", icon: "🥣", task: "Breakfast", type: "routine" },
+      { time: "10:00–12:00", icon: "💻", task: "Office work", type: "office" },
+      { time: "12:00–12:30", icon: "💡", task: "FLEX: Read 3 Content Design JDs — add to skills-gap notes", type: "flex" },
+      { time: "12:30–2:30", icon: "💻", task: "Office + lunch", type: "office" },
+      { time: "2:30–4:30", icon: "🤝", task: "Meetings", type: "office" },
+      { time: "4:30–7:30", icon: "💻", task: "Office work", type: "office" },
+      { time: "7:30–8:00", icon: "🍽️", task: "Dinner", type: "routine" },
+      { time: "8:00–8:30", icon: "👧", task: "Daughter time", type: "family" },
+      { time: "8:30–10:00", icon: "✍️", task: "CREATIVE: Write + publish Substack #3 ✅ Week 1 done!", type: "creative" },
+      { time: "10:00–10:30", icon: "🎬", task: "CREATIVE: Write Reel #2 script (from Idea Bank)", type: "creative" },
+      { time: "11:00", icon: "🌙", task: "Sleep", type: "routine" },
+    ],
+    wins: ["📬 Substack #3 published (Week 1: 3/3 ✅)", "🎬 Reel #2 script ready"]
+  },
+  {
+    date: "Mar 7", day: "SAT", label: "Day 6", theme: "Big Saturday",
+    schedule: [
+      { time: "7:30", icon: "☀️", task: "Wake up (weekend — slight lie-in)", type: "routine" },
+      { time: "8:00–8:30", icon: "🏃", task: "Exercise — 30 min", type: "health" },
+      { time: "8:30–9:00", icon: "☕", task: "Slow breakfast + newspaper", type: "routine" },
+      { time: "9:00–11:00", icon: "🌐", task: "POWER SESSION: Finish portfolio — add 2-3 writing samples, bio, contact. PUBLISH IT ✅", type: "creative" },
+      { time: "11:00–12:00", icon: "📹", task: "Shoot Reel #2", type: "creative" },
+      { time: "12:00–1:00", icon: "🍽️", task: "Lunch + break", type: "routine" },
+      { time: "2:00–3:30", icon: "✂️", task: "Edit + publish Reel #2 ✅", type: "creative" },
+      { time: "3:30–5:00", icon: "📄", task: "Rewrite resume for UX Writing / Content Design roles", type: "career" },
+      { time: "5:00–7:00", icon: "👨‍👩‍👧", task: "Family time", type: "family" },
+      { time: "7:00–8:00", icon: "📖", task: "Read book (extended)", type: "learn" },
+      { time: "10:00", icon: "🌙", task: "Sleep (earlier — well deserved!)", type: "routine" },
+    ],
+    wins: ["🌐 Portfolio LIVE ✅", "🎉 Reel #2 LIVE ✅", "📄 Resume v1 done"]
+  },
+  {
+    date: "Mar 8", day: "SUN", label: "Day 7", theme: "Rest & Review",
+    schedule: [
+      { time: "8:00", icon: "☀️", task: "Wake up — slow morning", type: "routine" },
+      { time: "8:30–9:30", icon: "📖", task: "Read book — 1 hour (indulgent)", type: "learn" },
+      { time: "9:30–10:30", icon: "🥞", task: "Slow breakfast", type: "routine" },
+      { time: "11:00–12:00", icon: "🔍", task: "Week 1 Review — what worked, what didn't. Adjust plan.", type: "review" },
+      { time: "12:00–1:00", icon: "📰", task: "Casual newspaper + top up Idea Bank", type: "content" },
+      { time: "1:00–5:00", icon: "👨‍👩‍👧", task: "Family time / rest", type: "family" },
+      { time: "5:00–6:00", icon: "✍️", task: "Optional: Outline Newsletter #4 if inspired", type: "creative" },
+      { time: "9:00", icon: "🌙", task: "Early sleep — big week ahead", type: "routine" },
+    ],
+    wins: ["🔍 Week 1 reviewed", "🔋 Recharged for Week 2"]
+  },
+  {
+    date: "Mar 9", day: "MON", label: "Day 8", theme: "Week 2 Begins",
+    schedule: [
+      { time: "6:30", icon: "☀️", task: "Wake up", type: "routine" },
+      { time: "6:30–7:00", icon: "🏃", task: "Exercise — 30 min", type: "health" },
+      { time: "7:00–7:45", icon: "🚿", task: "Get ready", type: "routine" },
+      { time: "7:45–8:15", icon: "📖", task: "Read book — 30 min", type: "learn" },
+      { time: "8:15–9:00", icon: "🎒", task: "Daughter prep + school drop", type: "family" },
+      { time: "9:00–9:30", icon: "📰", task: "Newspaper + reel idea notes", type: "content" },
+      { time: "9:30–10:00", icon: "🥣", task: "Breakfast", type: "routine" },
+      { time: "10:00–12:00", icon: "💻", task: "Office work", type: "office" },
+      { time: "12:00–12:30", icon: "💡", task: "FLEX: Research Comms Manager / Marketing Head roles — what skills & experience do they need?", type: "flex" },
+      { time: "12:30–2:30", icon: "💻", task: "Office + lunch", type: "office" },
+      { time: "2:30–4:30", icon: "🤝", task: "Meetings", type: "office" },
+      { time: "4:30–7:30", icon: "💻", task: "Office work", type: "office" },
+      { time: "7:30–8:00", icon: "🍽️", task: "Dinner", type: "routine" },
+      { time: "8:00–8:30", icon: "👧", task: "Daughter time", type: "family" },
+      { time: "8:30–10:30", icon: "✍️", task: "CREATIVE: Write + publish Substack #4 (use a newspaper insight)", type: "creative" },
+      { time: "11:00", icon: "🌙", task: "Sleep", type: "routine" },
+    ],
+    wins: ["📬 Substack #4 published"]
+  },
+  {
+    date: "Mar 10", day: "TUE", label: "Day 9", theme: "Claude Deep Dive",
+    schedule: [
+      { time: "6:30", icon: "☀️", task: "Wake up", type: "routine" },
+      { time: "6:30–7:00", icon: "🏃", task: "Exercise — 30 min", type: "health" },
+      { time: "7:00–7:45", icon: "🚿", task: "Get ready", type: "routine" },
+      { time: "7:45–8:15", icon: "📖", task: "Read book — 30 min", type: "learn" },
+      { time: "8:15–9:00", icon: "🎒", task: "Daughter prep + school drop", type: "family" },
+      { time: "9:00–9:30", icon: "📰", task: "Newspaper + reel idea notes", type: "content" },
+      { time: "9:30–10:00", icon: "🥣", task: "Breakfast", type: "routine" },
+      { time: "10:00–12:00", icon: "💻", task: "Office work", type: "office" },
+      { time: "12:00–12:30", icon: "💡", task: "FLEX: Experiment with Claude for newsletter drafts + reel scripts. Document your workflow.", type: "flex" },
+      { time: "12:30–2:30", icon: "💻", task: "Office + lunch", type: "office" },
+      { time: "2:30–4:30", icon: "🤝", task: "Meetings", type: "office" },
+      { time: "4:30–7:30", icon: "💻", task: "Office work", type: "office" },
+      { time: "7:30–8:00", icon: "🍽️", task: "Dinner", type: "routine" },
+      { time: "8:00–8:30", icon: "👧", task: "Daughter time", type: "family" },
+      { time: "8:30–9:30", icon: "🎬", task: "CREATIVE: Write Reel #3 script", type: "creative" },
+      { time: "9:30–10:30", icon: "📹", task: "CREATIVE: Shoot Reel #3", type: "creative" },
+      { time: "11:00", icon: "🌙", task: "Sleep", type: "routine" },
+    ],
+    wins: ["🎥 Reel #3 shot", "🤖 Claude workflow documented"]
+  },
+  {
+    date: "Mar 11", day: "WED", label: "Day 10", theme: "LinkedIn Glow-up",
+    schedule: [
+      { time: "6:30", icon: "☀️", task: "Wake up", type: "routine" },
+      { time: "6:30–7:00", icon: "🏃", task: "Exercise — 30 min", type: "health" },
+      { time: "7:00–7:45", icon: "🚿", task: "Get ready", type: "routine" },
+      { time: "7:45–8:15", icon: "📖", task: "Read book — 30 min", type: "learn" },
+      { time: "8:15–9:00", icon: "🎒", task: "Daughter prep + school drop", type: "family" },
+      { time: "9:00–9:30", icon: "📰", task: "Newspaper + reel idea notes", type: "content" },
+      { time: "9:30–10:00", icon: "🥣", task: "Breakfast", type: "routine" },
+      { time: "10:00–12:00", icon: "💻", task: "Office work", type: "office" },
+      { time: "12:00–12:30", icon: "💡", task: "FLEX: Draft new LinkedIn headline + About section for UX Writing / Content Design", type: "flex" },
+      { time: "12:30–2:30", icon: "💻", task: "Office + lunch", type: "office" },
+      { time: "2:30–4:30", icon: "🤝", task: "Meetings", type: "office" },
+      { time: "4:30–7:30", icon: "💻", task: "Office work", type: "office" },
+      { time: "7:30–8:00", icon: "🍽️", task: "Dinner", type: "routine" },
+      { time: "8:00–8:30", icon: "👧", task: "Daughter time", type: "family" },
+      { time: "8:30–10:00", icon: "✍️", task: "CREATIVE: Write + publish Substack #5", type: "creative" },
+      { time: "10:00–10:30", icon: "✂️", task: "CREATIVE: Begin editing Reel #3", type: "creative" },
+      { time: "11:00", icon: "🌙", task: "Sleep", type: "routine" },
+    ],
+    wins: ["📬 Substack #5 published", "💼 LinkedIn profile upgraded"]
+  },
+  {
+    date: "Mar 12", day: "THU", label: "Day 11", theme: "Portfolio Polish",
+    schedule: [
+      { time: "6:30", icon: "☀️", task: "Wake up", type: "routine" },
+      { time: "6:30–7:00", icon: "🏃", task: "Exercise — 30 min", type: "health" },
+      { time: "7:00–7:45", icon: "🚿", task: "Get ready", type: "routine" },
+      { time: "7:45–8:15", icon: "📖", task: "Read book — 30 min", type: "learn" },
+      { time: "8:15–9:00", icon: "🎒", task: "Daughter prep + school drop", type: "family" },
+      { time: "9:00–9:30", icon: "📰", task: "Newspaper + reel idea notes", type: "content" },
+      { time: "9:30–10:00", icon: "🥣", task: "Breakfast", type: "routine" },
+      { time: "10:00–12:00", icon: "💻", task: "Office work", type: "office" },
+      { time: "12:00–12:30", icon: "💡", task: "FLEX: Research 5 dream companies — check openings and culture", type: "flex" },
+      { time: "12:30–2:30", icon: "💻", task: "Office + lunch", type: "office" },
+      { time: "2:30–4:30", icon: "🤝", task: "Meetings", type: "office" },
+      { time: "4:30–7:30", icon: "💻", task: "Office work", type: "office" },
+      { time: "7:30–8:00", icon: "🍽️", task: "Dinner", type: "routine" },
+      { time: "8:00–8:30", icon: "👧", task: "Daughter time", type: "family" },
+      { time: "8:30–9:00", icon: "🚀", task: "CREATIVE: Finish + publish Reel #3 ✅", type: "creative" },
+      { time: "9:00–10:30", icon: "🌐", task: "CREATIVE: Refine portfolio — align samples with UX Writing & Content Design roles", type: "creative" },
+      { time: "11:00", icon: "🌙", task: "Sleep", type: "routine" },
+    ],
+    wins: ["🎉 Reel #3 LIVE ✅", "🌐 Portfolio refined for target roles"]
+  },
+  {
+    date: "Mar 13", day: "FRI", label: "Day 12", theme: "Apply Day",
+    schedule: [
+      { time: "6:30", icon: "☀️", task: "Wake up", type: "routine" },
+      { time: "6:30–7:00", icon: "🏃", task: "Exercise — 30 min", type: "health" },
+      { time: "7:00–7:45", icon: "🚿", task: "Get ready", type: "routine" },
+      { time: "7:45–8:15", icon: "📖", task: "Read book — 30 min", type: "learn" },
+      { time: "8:15–9:00", icon: "🎒", task: "Daughter prep + school drop", type: "family" },
+      { time: "9:00–9:30", icon: "📰", task: "Newspaper + reel idea notes", type: "content" },
+      { time: "9:30–10:00", icon: "🥣", task: "Breakfast", type: "routine" },
+      { time: "10:00–12:00", icon: "💻", task: "Office work", type: "office" },
+      { time: "12:00–12:30", icon: "💡", task: "FLEX: Bookmark 3 open roles + write cover letter template", type: "flex" },
+      { time: "12:30–2:30", icon: "💻", task: "Office + lunch", type: "office" },
+      { time: "2:30–4:30", icon: "🤝", task: "Meetings", type: "office" },
+      { time: "4:30–7:30", icon: "💻", task: "Office work", type: "office" },
+      { time: "7:30–8:00", icon: "🍽️", task: "Dinner", type: "routine" },
+      { time: "8:00–8:30", icon: "👧", task: "Daughter time", type: "family" },
+      { time: "8:30–10:30", icon: "✍️", task: "CREATIVE: Write + publish Substack #6 ✅ Week 2 done!", type: "creative" },
+      { time: "11:00", icon: "🌙", task: "Sleep", type: "routine" },
+    ],
+    wins: ["📬 Substack #6 published (Week 2: 3/3 ✅)", "📋 Cover letter template ready"]
+  },
+  {
+    date: "Mar 14", day: "SAT", label: "Day 13", theme: "Strategy Saturday",
+    schedule: [
+      { time: "7:30", icon: "☀️", task: "Wake up", type: "routine" },
+      { time: "8:00–8:30", icon: "🏃", task: "Exercise — 30 min", type: "health" },
+      { time: "8:30–9:00", icon: "☕", task: "Slow breakfast + newspaper", type: "routine" },
+      { time: "9:00–10:30", icon: "🎯", task: "POWER SESSION: Write your personal brand positioning doc — niche, tone, what you stand for", type: "creative" },
+      { time: "10:30–12:00", icon: "📮", task: "Apply to 2–3 roles with customized cover letters", type: "career" },
+      { time: "12:00–1:00", icon: "🍽️", task: "Lunch + break", type: "routine" },
+      { time: "2:00–3:30", icon: "📅", task: "Plan content calendar for next 15 days (newsletters + reels)", type: "creative" },
+      { time: "3:30–5:00", icon: "📖", task: "Read book (extended)", type: "learn" },
+      { time: "5:00–8:00", icon: "👨‍👩‍👧", task: "Family time", type: "family" },
+      { time: "10:00", icon: "🌙", task: "Sleep", type: "routine" },
+    ],
+    wins: ["🎯 Brand doc done", "📮 3 job apps sent ✅", "📅 Next 15-day content planned"]
+  },
+  {
+    date: "Mar 15", day: "SUN", label: "Day 14", theme: "Deep Review",
+    schedule: [
+      { time: "8:00", icon: "☀️", task: "Wake up — slow morning", type: "routine" },
+      { time: "8:30–9:30", icon: "📖", task: "Read book — 1 hour", type: "learn" },
+      { time: "9:30–10:30", icon: "🥞", task: "Slow breakfast", type: "routine" },
+      { time: "11:00–12:00", icon: "🔍", task: "15-day review — count what you did vs planned. Score yourself.", type: "review" },
+      { time: "12:00–1:00", icon: "📅", task: "Prep for next 15-day cycle", type: "review" },
+      { time: "1:00–6:00", icon: "👨‍👩‍👧", task: "Family time / full rest", type: "family" },
+      { time: "9:00", icon: "🌙", task: "Early sleep", type: "routine" },
+    ],
+    wins: ["🔍 Full 15-day reviewed", "📅 Next cycle planned ✅"]
+  },
+  {
+    date: "Mar 16", day: "MON", label: "Day 15", theme: "Cycle 2 Begins",
+    schedule: [
+      { time: "6:30", icon: "☀️", task: "Wake up — habits are locked in now 💪", type: "routine" },
+      { time: "6:30–7:00", icon: "🏃", task: "Exercise — 30 min", type: "health" },
+      { time: "7:00–7:45", icon: "🚿", task: "Get ready", type: "routine" },
+      { time: "7:45–8:15", icon: "📖", task: "Read book — 30 min", type: "learn" },
+      { time: "8:15–9:00", icon: "🎒", task: "Daughter prep + school drop", type: "family" },
+      { time: "9:00–9:30", icon: "📰", task: "Newspaper + reel idea notes", type: "content" },
+      { time: "9:30–10:00", icon: "🥣", task: "Breakfast", type: "routine" },
+      { time: "10:00–12:00", icon: "💻", task: "Office work", type: "office" },
+      { time: "12:00–12:30", icon: "💡", task: "FLEX: Begin next cycle — new goals, new JDs to research", type: "flex" },
+      { time: "12:30–7:30", icon: "💻", task: "Office work + lunch + meetings", type: "office" },
+      { time: "7:30–8:00", icon: "🍽️", task: "Dinner", type: "routine" },
+      { time: "8:00–8:30", icon: "👧", task: "Daughter time", type: "family" },
+      { time: "8:30–10:30", icon: "✍️", task: "CREATIVE: Substack #7 — Cycle 2 begins!", type: "creative" },
+      { time: "11:00", icon: "🌙", task: "Sleep", type: "routine" },
+    ],
+    wins: ["🔄 Cycle 2 STARTED", "📬 Substack #7 published"]
+  },
+];
+
+const typeColors = {
+  routine: { bg: "bg-gray-100", text: "text-gray-600", dot: "#9ca3af" },
+  health: { bg: "bg-emerald-50", text: "text-emerald-700", dot: "#059669" },
+  learn: { bg: "bg-amber-50", text: "text-amber-700", dot: "#d97706" },
+  family: { bg: "bg-pink-50", text: "text-pink-700", dot: "#db2777" },
+  content: { bg: "bg-sky-50", text: "text-sky-700", dot: "#0284c7" },
+  office: { bg: "bg-slate-100", text: "text-slate-600", dot: "#475569" },
+  flex: { bg: "bg-violet-50", text: "text-violet-700", dot: "#7c3aed" },
+  creative: { bg: "bg-orange-50", text: "text-orange-700", dot: "#ea580c" },
+  career: { bg: "bg-teal-50", text: "text-teal-700", dot: "#0f766e" },
+  review: { bg: "bg-indigo-50", text: "text-indigo-700", dot: "#4338ca" },
+};
+
+const weekLabels = ["WEEK 1", "WEEK 2", "WEEK 3 (Starts)"];
+const weekBoundaries = [0, 7, 14];
+
+export default function Planner() {
+  const [selected, setSelected] = useState(0);
+  const [completedTasks, setCompletedTasks] = useState({});
+
+  const toggleTask = (dayIdx, taskIdx) => {
+    const key = `${dayIdx}-${taskIdx}`;
+    setCompletedTasks(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const day = days[selected];
+
+  const completedCount = day.schedule.filter((_, i) => completedTasks[`${selected}-${i}`]).length;
+  const progress = Math.round((completedCount / day.schedule.length) * 100);
+
+  return (
+    <div style={{ fontFamily: "'Georgia', serif", minHeight: "100vh", background: "#faf9f7" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        .playfair { font-family: 'Playfair Display', Georgia, serif; }
+        .dm { font-family: 'DM Sans', sans-serif; }
+        .day-btn { transition: all 0.2s; }
+        .day-btn:hover { transform: translateY(-1px); }
+        .task-row { transition: all 0.15s; }
+        .task-row:hover { background: rgba(0,0,0,0.02); }
+        .check-btn { transition: all 0.15s; cursor: pointer; }
+        .check-btn:hover { transform: scale(1.1); }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d4cfc8; border-radius: 2px; }
+        .win-tag { animation: pop 0.3s ease; }
+        @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+      `}</style>
+
+      {/* Header */}
+      <div style={{ background: "#1c1917", padding: "28px 24px 24px", position: "sticky", top: 0, zIndex: 50 }}>
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 4 }}>
+            <h1 className="playfair" style={{ fontSize: 22, color: "#fafaf9", fontWeight: 800, letterSpacing: "-0.5px" }}>
+              15-Day Master Plan
+            </h1>
+            <span className="dm" style={{ fontSize: 12, color: "#78716c", letterSpacing: "2px", textTransform: "uppercase" }}>
+              March 2–16, 2025
+            </span>
+          </div>
+          <p className="dm" style={{ fontSize: 12, color: "#57534e", marginBottom: 16 }}>
+            Click a day to see your schedule. Check off tasks as you go.
+          </p>
+
+          {/* Calendar Grid */}
+          <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+            {days.map((d, i) => {
+              const isWeekend = d.day === "SAT" || d.day === "SUN";
+              const isSelected = i === selected;
+              const completed = d.schedule.filter((_, ti) => completedTasks[`${i}-${ti}`]).length;
+              const done = completed === d.schedule.length && completed > 0;
+
+              return (
+                <button
+                  key={i}
+                  className="day-btn dm"
+                  onClick={() => setSelected(i)}
+                  style={{
+                    width: 50,
+                    padding: "7px 4px",
+                    borderRadius: 8,
+                    border: "none",
+                    cursor: "pointer",
+                    background: isSelected ? "#e8845a" : done ? "#3d9970" : isWeekend ? "#292524" : "#28211e",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 2,
+                    outline: isSelected ? "2px solid #f97316" : "none",
+                    outlineOffset: 1,
+                  }}
+                >
+                  <span style={{ fontSize: 9, color: isSelected ? "#fff" : "#78716c", letterSpacing: "1px", fontWeight: 600 }}>
+                    {d.day}
+                  </span>
+                  <span style={{ fontSize: 13, color: isSelected ? "#fff" : done ? "#6ee7b7" : isWeekend ? "#c8b6a6" : "#e7e5e4", fontWeight: 600 }}>
+                    {d.date.split(" ")[1]}
+                  </span>
+                  {done && <span style={{ fontSize: 8 }}>✓</span>}
+                  {completed > 0 && !done && (
+                    <div style={{ width: 24, height: 2, borderRadius: 1, background: "#44403c", marginTop: 1 }}>
+                      <div style={{ width: `${(completed / d.schedule.length) * 100}%`, height: "100%", background: "#e8845a", borderRadius: 1 }} />
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "24px 16px" }}>
+        {/* Day header */}
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
+          <div>
+            <div className="dm" style={{ fontSize: 11, color: "#a8a29e", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>
+              {day.label} · {day.day}, {day.date}
+            </div>
+            <h2 className="playfair" style={{ fontSize: 28, color: "#1c1917", fontWeight: 800, letterSpacing: "-0.5px" }}>
+              {day.theme}
+            </h2>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <div className="dm" style={{ fontSize: 11, color: "#a8a29e", marginBottom: 6 }}>DAILY PROGRESS</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ width: 120, height: 6, borderRadius: 3, background: "#e7e5e4" }}>
+                <div style={{ width: `${progress}%`, height: "100%", borderRadius: 3, background: "#e8845a", transition: "width 0.4s ease" }} />
+              </div>
+              <span className="dm" style={{ fontSize: 13, fontWeight: 600, color: "#57534e" }}>{progress}%</span>
+            </div>
+            <div className="dm" style={{ fontSize: 11, color: "#a8a29e", marginTop: 3 }}>{completedCount}/{day.schedule.length} tasks</div>
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 }}>
+          {Object.entries(typeColors).filter(([k]) => day.schedule.some(t => t.type === k)).map(([type, colors]) => (
+            <span key={type} className="dm" style={{ fontSize: 10, letterSpacing: "1px", textTransform: "uppercase", padding: "3px 8px", borderRadius: 20, background: colors.dot + "18", color: colors.dot, fontWeight: 600 }}>
+              ● {type}
+            </span>
+          ))}
+        </div>
+
+        {/* Schedule */}
+        <div style={{ background: "#fff", borderRadius: 16, border: "1px solid #e7e5e4", overflow: "hidden", marginBottom: 20 }}>
+          {day.schedule.map((item, i) => {
+            const isDone = completedTasks[`${selected}-${i}`];
+            const colors = typeColors[item.type] || typeColors.routine;
+            return (
+              <div
+                key={i}
+                className="task-row"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0,
+                  borderBottom: i < day.schedule.length - 1 ? "1px solid #f5f5f4" : "none",
+                  opacity: isDone ? 0.5 : 1,
+                  background: isDone ? "#fafaf9" : "transparent",
+                }}
+              >
+                {/* Left strip */}
+                <div style={{ width: 4, alignSelf: "stretch", background: colors.dot, flexShrink: 0 }} />
+
+                {/* Time */}
+                <div className="dm" style={{ width: 110, padding: "12px 12px 12px 12px", fontSize: 11, color: "#a8a29e", flexShrink: 0, fontWeight: 500 }}>
+                  {item.time}
+                </div>
+
+                {/* Emoji */}
+                <div style={{ width: 28, fontSize: 15, flexShrink: 0 }}>
+                  {item.icon}
+                </div>
+
+                {/* Task */}
+                <div className="dm" style={{ flex: 1, padding: "12px 8px", fontSize: 13, color: isDone ? "#a8a29e" : "#292524", textDecoration: isDone ? "line-through" : "none", lineHeight: 1.4 }}>
+                  {item.task}
+                </div>
+
+                {/* Check */}
+                <button
+                  className="check-btn"
+                  onClick={() => toggleTask(selected, i)}
+                  style={{
+                    width: 28, height: 28, borderRadius: "50%", border: `2px solid ${isDone ? colors.dot : "#d6d3d1"}`,
+                    background: isDone ? colors.dot : "transparent",
+                    flexShrink: 0, marginRight: 12,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 12, color: "#fff",
+                  }}
+                >
+                  {isDone ? "✓" : ""}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Wins */}
+        <div style={{ background: "#1c1917", borderRadius: 12, padding: "16px 20px" }}>
+          <div className="dm" style={{ fontSize: 10, letterSpacing: "2px", textTransform: "uppercase", color: "#57534e", marginBottom: 10 }}>
+            🏆 End of Day Wins
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {day.wins.map((win, i) => (
+              <span key={i} className="win-tag dm" style={{ background: "#292524", padding: "6px 12px", borderRadius: 20, fontSize: 13, color: "#e7e5e4" }}>
+                {win}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Nav */}
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 20 }}>
+          <button
+            onClick={() => setSelected(Math.max(0, selected - 1))}
+            disabled={selected === 0}
+            className="dm"
+            style={{
+              padding: "10px 20px", borderRadius: 8, border: "1px solid #e7e5e4",
+              background: selected === 0 ? "#fafaf9" : "#fff", color: selected === 0 ? "#d6d3d1" : "#57534e",
+              cursor: selected === 0 ? "default" : "pointer", fontSize: 13, fontWeight: 500,
+            }}
+          >
+            ← Previous Day
+          </button>
+          <span className="dm" style={{ fontSize: 12, color: "#a8a29e", alignSelf: "center" }}>
+            {selected + 1} of 15
+          </span>
+          <button
+            onClick={() => setSelected(Math.min(days.length - 1, selected + 1))}
+            disabled={selected === days.length - 1}
+            className="dm"
+            style={{
+              padding: "10px 20px", borderRadius: 8, border: "1px solid #e7e5e4",
+              background: selected === days.length - 1 ? "#fafaf9" : "#fff", color: selected === days.length - 1 ? "#d6d3d1" : "#57534e",
+              cursor: selected === days.length - 1 ? "default" : "pointer", fontSize: 13, fontWeight: 500,
+            }}
+          >
+            Next Day →
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
